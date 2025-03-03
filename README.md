@@ -8,7 +8,8 @@
 | Versión | Fecha      | Comentario                                    | Autor |
 | ------- | ---------- | --------------------------------------------- | ----- |
 | 1.0.1   | 03/02/2025 | Primera edición. Marco teorico y cheat sheet. | Jes   |
-| 10.2    | 16/02/2025 |                                               |       |
+| 1.0.2    | 16/02/2025 |                                               |   jes    |
+| 1.0.3    | 02/03/2025 |Se agregan mas apps al marco teórico           |   jes    |
 
 * * *
 ### Introducción
