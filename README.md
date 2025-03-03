@@ -20,13 +20,14 @@ La arquitectura propuesta no solo ofrece control total sobre los datos, sino que
 Este enfoque es particularmente útil para entornos académicos y profesionales que requieren un sistema resiliente y de alta disponibilidad. Para implementaciones organizacionales o empresariales tambien pueden beneficiarse de esta guia.
 
 ### 1. Marco Teórico
+
 #### 1.1 **VPS (Virtual Private Server)**
 
 - **Definición técnica**:  
     Un VPS es una instancia virtualizada que opera sobre un hipervisor (como KVM, Xen o VMware), asignando recursos dedicados (CPU, RAM, almacenamiento NVMe/SSD) dentro de un servidor físico. A diferencia de los contenedores, un VPS tiene un kernel independiente, lo que permite una personalización completa del stack de software, incluyendo el sistema operativo, el firewall y los servicios.
   
 - **Ventajas estratégicas**:
-    - **Aislamiento de recursos**: Garantiza un rendimiento estable bajo carga, gracias a la asignación exclusiva de CPU y RA).
+    - **Aislamiento de recursos**: Garantiza un rendimiento estable bajo carga, gracias a la asignación exclusiva de CPU y RAM.
     - **Control de seguridad**: Permite la implementación de medidas avanzadas como hardening del SO (AppArmor, SELinux), gestión de parches y configuración de redes privadas (VPN WireGuard/IPsec).
     - **Costo-eficiencia**: Ofrece una alternativa económica frente a los servidores dedicados, con planes que parten desde 5 USD/mes (por ejemplo, en DigitalOcean, Linode o Hetzner).
 
@@ -34,33 +35,73 @@ Este enfoque es particularmente útil para entornos académicos y profesionales 
 
 - **Fundamentos**:  
     WebDAV es un protocolo de capa de aplicación que extiende los métodos HTTP (como PUT, DELETE y PROPFIND) para permitir operaciones CRUD sobre archivos. Es compatible con sistemas *nix (a través de `davfs2`) y clientes como Joplin.
-  
+
 - **Implementación en Nextcloud**:  
     Nextcloud integra WebDAV bajo la ruta `https://<dominio>/remote.php/dav/files/<usuario>/`, utilizando autenticación OAuth2/Basic Auth y cifrado TLS 1.3. Esta implementación permite una sincronización eficiente (solo se transfieren los cambios) y bloqueos de archivos para prevenir conflictos.
 
-#### 1.3 **Markdown (CommonMark Standard)**
+#### 1.3 **Manejadores de Archivos y su Interconexión con Nextcloud**
+
+Los manejadores de archivos son herramientas esenciales para la gestión de datos en sistemas operativos. Algunos de ellos ofrecen soporte para WebDAV, lo que permite la conexión y gestión de archivos en servidores como Nextcloud. A continuación, se describen algunos de los manejadores de archivos más conocidos y sus capacidades:
+
+1. **FileZilla**:
+   - Soporta WebDAV y permite la transferencia de archivos entre el cliente y el servidor Nextcloud. Su interfaz gráfica es intuitiva y facilita la gestión de archivos.
+
+2. **Cyberduck**:
+   - Un cliente de transferencia de archivos que soporta múltiples protocolos, incluyendo WebDAV. Su integración con Nextcloud permite a los usuarios gestionar archivos de manera eficiente y segura.
+
+3. **Nautilus** (Archivos):
+   - El gestor de archivos predeterminado de GNOME que permite montar unidades WebDAV fácilmente. Su integración con Nextcloud es directa, facilitando la sincronización de archivos.
+
+4. **Dolphin**:
+   - El gestor de archivos de KDE que también soporta WebDAV. Ofrece una interfaz completa y es ideal para usuarios de entornos de escritorio KDE que utilizan Nextcloud.
+
+5. **Thunar**:
+   - Un gestor de archivos para entornos de escritorio XFCE. Aunque no tiene soporte nativo para WebDAV, se puede habilitar mediante la instalación de paquetes adicionales, permitiendo la conexión a Nextcloud.
+
+6. **Caja**:
+   - El gestor de archivos de MATE, que permite la conexión a unidades WebDAV. Su simplicidad y ligereza lo hacen adecuado para usuarios que buscan una experiencia fluida con Nextcloud.
+
+7. **Ranger** y **Midnight Commander**:
+   - Aunque son gestores de archivos basados en texto, pueden configurarse para trabajar con WebDAV, permitiendo la gestión de archivos en Nextcloud desde la terminal.
+
+#### 1.4 **Markdown (CommonMark Standard)**
 
 - **Ventajas técnicas**:
     - **Portabilidad**: Los archivos `.md` son legibles en editores de texto plano (como Vim o VSCode) y compatibles con herramientas de DevOps (Git, CI/CD).
     - **Extensibilidad**: Soporta sintaxis avanzada para diagramas (Mermaid), fórmulas matemáticas (LaTeX) y metadatos (YAML frontmatter).
     - **Conversión sin pérdidas**: Puede ser renderizado a HTML o PDF utilizando herramientas como Pandoc o MkDocs.
 
-#### 1.4 Cliente/Editor de Markdown.
+#### 1.5 **Cliente/Editor de Markdown**
+Claro, aquí tienes la continuación de la sección teórica:
 
-##### 1.4.1 **[Joplin (v2.14.19+)](https://github.com/laurent22/joplin)**
+##### 1.5.1 **[Joplin (v2.14.19+)](https://github.com/laurent22/joplin)**
 Joplin es un cliente de notas multiplataforma (basado en Electron.js para desktop y React Native para móvil) que utiliza un motor de sincronización delta y cifrado AES-256-GCM (opcional) tanto en reposo como en tránsito. Además, soporta plugins (TypeScript/Node.js) y una CLI para automatización.
-  
-- **Integración con WebDAV**:  
-    Joplin almacena las notas como archivos `.md` junto con metadatos en archivos `*.json`, organizados en una estructura jerárquica en el servidor. El cliente maneja conflictos mediante timestamps y hashes SHA-256.
-##### 1.4.2 [Obsidian (v1.8.4)](https://obsidian.md/download)
-Obsidian es una herramienta de gestión de conocimiento basada en Markdown, diseñada para crear y organizar notas en un sistema de bóvedas locales. A diferencia de Joplin, Obsidian no tiene un sistema de sincronización por WebDAV nativo , por eso usamos el plugin [**Remotely Save**](https://github.com/remotely-save/remotely-save), una solución de sincronización no oficial que permite a los usuarios sincronizar sus bóvedas entre dispositivos utilizando servicios en la nube como Amazon S3, Dropbox, OneDrive, WebDAV y otros. Este plugin soporta cifrado de extremo a extremo mediante OpenSSL/rclone, lo que garantiza la seguridad de los datos durante la transferencia. Además, ofrece opciones para omitir archivos grandes y rutas específicas mediante expresiones regulares, así como detección básica de conflictos en su versión gratuita y manejo avanzado de conflictos en la versión PRO.
 
-#### 1.5 [**Nextcloud (v28+)**](https://github.com/nextcloud/server)
+- **Integración con WebDAV**:  
+    Joplin almacena las notas como archivos `.md` junto con metadatos en archivos `*.json`, organizados en una estructura jerárquica en el servidor. El cliente maneja conflictos mediante timestamps y hashes SHA-256, lo que permite una sincronización eficiente con Nextcloud a través de WebDAV.
+
+##### 1.5.2 **[Obsidian (v1.8.4)](https://obsidian.md/download)**
+Obsidian es una herramienta de gestión de conocimiento basada en Markdown, diseñada para crear y organizar notas en un sistema de bóvedas locales. A diferencia de Joplin, Obsidian no tiene un sistema de sincronización por WebDAV nativo, por eso se utiliza el plugin [**Remotely Save**](https://github.com/remotely-save/remotely-save), una solución de sincronización no oficial que permite a los usuarios sincronizar sus bóvedas entre dispositivos utilizando servicios en la nube como Amazon S3, Dropbox, OneDrive, WebDAV y otros. Este plugin soporta cifrado de extremo a extremo mediante OpenSSL/rclone, lo que garantiza la seguridad de los datos durante la transferencia. Además, ofrece opciones para omitir archivos grandes y rutas específicas mediante expresiones regulares, así como detección básica de conflictos en su versión gratuita y manejo avanzado de conflictos en la versión PRO.
+
+#### 1.6 **Nextcloud (v28+)**  
+[Nextcloud](https://github.com/nextcloud/server) es una plataforma de colaboración y almacenamiento en la nube que permite a los usuarios gestionar sus archivos de manera segura y privada.
 
 - **Stack tecnológico**:
     - **Backend**: PHP 8.2 con OPcache, y bases de datos como MariaDB Galera Cluster o PostgreSQL para alta disponibilidad.
     - **Almacenamiento**: Soporta S3 Object Storage, FTP-SSL y sistemas de archivos distribuidos como GlusterFS.
-    - **Seguridad**: Incluye autenticación 2FA (TOTP, WebAuthn), auditoría de logs via syslog-ng y políticas de retención compatibles con GDPR.
+    - **Seguridad**: Incluye autenticación 2FA (TOTP, WebAuthn), auditoría de logs vía syslog-ng y políticas de retención compatibles con GDPR.
+
+- **Interconexión con Manejadores de Archivos**:  
+    Nextcloud permite la integración con varios manejadores de archivos a través de WebDAV, lo que facilita la gestión de archivos desde diferentes plataformas. Los usuarios pueden acceder, editar y sincronizar sus archivos almacenados en Nextcloud utilizando clientes como FileZilla, Cyberduck, Nautilus, y otros mencionados anteriormente. Esta flexibilidad permite a los usuarios elegir la herramienta que mejor se adapte a sus necesidades y flujos de trabajo.
+
+- **Clientes adicionales para Nextcloud**:  
+    Además de Joplin y Obsidian, otros clientes que se comunican con Nextcloud incluyen:
+    - **Nextcloud Desktop Client**: Permite la sincronización de archivos entre el escritorio y el servidor Nextcloud.
+    - **Collabora Online**: Una suite de oficina que se integra con Nextcloud para la edición de documentos en línea.
+    - **OnlyOffice**: Otra opción de suite de oficina que permite la edición colaborativa de documentos directamente en Nextcloud.
+    - **Nextcloud Talk**: Para comunicación y colaboración en tiempo real, integrándose con el almacenamiento de archivos de Nextcloud.
+
+--- 
 
 ### 2 Implementacion
 #### 2.1 Pre-requisitos
