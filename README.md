@@ -26,7 +26,7 @@ Este enfoque es particularmente útil para entornos académicos y profesionales 
     Un VPS es una instancia virtualizada que opera sobre un hipervisor (como KVM, Xen o VMware), asignando recursos dedicados (CPU, RAM, almacenamiento NVMe/SSD) dentro de un servidor físico. A diferencia de los contenedores, un VPS tiene un kernel independiente, lo que permite una personalización completa del stack de software, incluyendo el sistema operativo, el firewall y los servicios.
   
 - **Ventajas estratégicas**:
-    - **Aislamiento de recursos**: Garantiza un rendimiento estable bajo carga, gracias a la asignación exclusiva de CPU y RAM (por ejemplo, en planes con SLA del 99.9%).
+    - **Aislamiento de recursos**: Garantiza un rendimiento estable bajo carga, gracias a la asignación exclusiva de CPU y RA).
     - **Control de seguridad**: Permite la implementación de medidas avanzadas como hardening del SO (AppArmor, SELinux), gestión de parches y configuración de redes privadas (VPN WireGuard/IPsec).
     - **Costo-eficiencia**: Ofrece una alternativa económica frente a los servidores dedicados, con planes que parten desde 5 USD/mes (por ejemplo, en DigitalOcean, Linode o Hetzner).
 
