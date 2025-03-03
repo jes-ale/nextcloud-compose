@@ -13,7 +13,7 @@
 * * *
 ### Introducción
 
-Contar con un sistema autohospedado que garantice soberanía, disponibilidad y seguridad ofrece extensas ventajas para profesionales, investigadores, estudiantes y académicos. Este artículo presenta una solución técnica para la gestión y sincronización de notas, trabajos de investigación o documentos académico y en general cualquier tipo de documento ligero de acceso cotidiano ( 50 MB > txt, csv, xlsx, md, docx, codigo de programacion), utilizando tecnologías de código abierto: **Nextcloud**, **Joplin**/**Obsidian** para servir **Markdown**, implementadas sobre un servidor VPS con **Docker** y **Nginx** como reverse proxy.
+Contar con un sistema autohospedado que garantice soberanía, disponibilidad y seguridad ofrece extensas ventajas para profesionales, investigadores, estudiantes y académicos. Este artículo presenta una solución técnica para la gestión y sincronización de notas, documentos academicos, de investigacion, de caracter profesional o personal y en general cualquier tipo de documento ligero de acceso cotidiano ( 50 MB > txt, csv, xlsx, md, docx, codigo de programacion), utilizando tecnologías de código abierto: **Nextcloud**, **Joplin**/**Obsidian** para servir **Markdown**, implementadas sobre un servidor VPS con **Docker** y **Nginx** como reverse proxy.
 
 La arquitectura propuesta no solo ofrece control total sobre los datos, sino que también evita la dependencia de servicios de terceros, optimizando la portabilidad mediante estándares abiertos. Además, se prioriza la seguridad, la escalabilidad y la eficiencia en el uso de recursos, lo que la hace ideal para usuarios con necesidades avanzadas de personalización y requisitos exigentes de disponibilidad.
 
