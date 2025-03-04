@@ -73,8 +73,6 @@ Los manejadores de archivos son herramientas esenciales para la gestión de dato
     - **Conversión sin pérdidas**: Puede ser renderizado a HTML o PDF utilizando herramientas como Pandoc o MkDocs.
 
 #### 1.5 **Cliente/Editor de Markdown**
-Claro, aquí tienes la continuación de la sección teórica:
-
 ##### 1.5.1 **[Joplin (v2.14.19+)](https://github.com/laurent22/joplin)**
 Joplin es un cliente de notas multiplataforma (basado en Electron.js para desktop y React Native para móvil) que utiliza un motor de sincronización delta y cifrado AES-256-GCM (opcional) tanto en reposo como en tránsito. Además, soporta plugins (TypeScript/Node.js) y una CLI para automatización.
 
