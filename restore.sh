@@ -3,19 +3,17 @@
 # Exit on errors and undefined variables
 set -euo pipefail
 
-# Configuration - EDITAR ESTAS VARIABLES SEGÚN TU ENTORNO
-RESTORE_FILE="$1"                       # Archivo de backup a restaurar (pasado como argumento)
+# Configuration
 DOCKER_COMPOSE_DIR="/mycomposepath"     # Directorio del docker-compose.yml
 DOCKER_COMPOSE_FILE="$DOCKER_COMPOSE_DIR/docker-compose.yml"
-DB_NAME="nextcloud"
-DB_USER="nextcloud"
-DB_PASSWORD="tu_password_bd"            # Reemplazar con tu password de BD
 
 # Validar argumentos
 if [[ $# -eq 0 ]]; then
     echo "Usage: $0 <backup_file.tar.gz>"
     exit 1
 fi
+
+RESTORE_FILE="$1"
 
 if [[ ! -f "$RESTORE_FILE" ]]; then
     echo "Error: Archivo de backup no encontrado: $RESTORE_FILE"
@@ -28,8 +26,17 @@ if [[ ! -d "$DOCKER_COMPOSE_DIR" ]] || [[ ! -f "$DOCKER_COMPOSE_FILE" ]]; then
     exit 1
 fi
 
-if [[ -z "$DB_PASSWORD" ]]; then
-    echo "Error: Password de base de datos no configurado"
+# Load database password from .env file
+if [[ -f "$DOCKER_COMPOSE_DIR/.env" ]]; then
+    source "$DOCKER_COMPOSE_DIR/.env"
+else
+    echo "Error: No se encuentra el archivo .env en $DOCKER_COMPOSE_DIR"
+    exit 1
+fi
+
+# Validate that password is set
+if [[ -z "${MYSQL_PASSWORD:-}" ]]; then
+    echo "Error: Password de base de datos no configurado en el archivo .env"
     exit 1
 fi
 
@@ -81,12 +88,12 @@ sleep 30
 
 # Restaurar base de datos
 echo "Restoring database..."
-gunzip -c "$RESTORE_DIR/nextcloud_db.sql.gz" | docker compose exec -T db mysql -u "$DB_USER" -p"$DB_PASSWORD" "$DB_NAME"
+gunzip -c "$RESTORE_DIR/nextcloud_db.sql.gz" | docker compose exec -T db mysql -u nextcloud -p"$MYSQL_PASSWORD" nextcloud
 
 # Limpiar archivos temporales
 rm -rf "$BACKUP_EXTRACT_DIR"
 
 echo "Restoration completed successfully!"
 echo "Please remember to:"
-echo "1. Verify your .env file is correctly placed in $DOCKER_COMPOSE_DIR"
+echo "1. Verify your instance is working correctly"
 echo "2. Disable maintenance mode when ready"
