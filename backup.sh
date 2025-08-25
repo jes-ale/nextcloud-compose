@@ -1,94 +1,105 @@
 #!/bin/bash
-
-# Exit on errors and undefined variables
 set -euo pipefail
 
-# Configuration - EDITAR ESTAS VARIABLES SEGÚN TU ENTORNO
-BACKUP_DIR="/home/ubuntu/vault/nextcloud_backup"                    # Directorio donde se guardarán los backups
-DOCKER_COMPOSE_DIR="/home/ubuntu/apis/quadrocloud"     # Directorio del docker-compose.yml
-DOCKER_COMPOSE_FILE="$DOCKER_COMPOSE_DIR/docker-compose.yml"
-DB_NAME="nextcloud"
-DB_USER="nextcloud"
-DB_PASSWORD="tu_password_bd"            # Reemplazar con tu password de BD
-
-# Obtener timestamp para los archivos
+# Configuration
+BACKUP_DIR="/mypath"
+DOCKER_COMPOSE_DIR="/mycomposepath"
 TIMESTAMP=$(date +"%Y%m%d_%H%M%S")
-BACKUP_SUBDIR="$BACKUP_DIR/nextcloud_backup_$TIMESTAMP"
+BACKUP_NAME="nextcloud_backup_$TIMESTAMP"
 
-# Validar configuración
-if [[ ! -d "$DOCKER_COMPOSE_DIR" ]] || [[ ! -f "$DOCKER_COMPOSE_FILE" ]]; then
-    echo "Error: No se encuentra el directorio o archivo docker-compose.yml"
-    exit 1
-fi
+# Create backup directory
+mkdir -p "$BACKUP_DIR/$BACKUP_NAME"
 
-if [[ -z "$DB_PASSWORD" ]]; then
-    echo "Error: Password de base de datos no configurado"
-    exit 1
-fi
+echo "Starting Nextcloud backup process..."
 
-# Crear directorio de backup
-mkdir -p "$BACKUP_SUBDIR"
-
-# Verificar que los contenedores estén ejecutándose
+# Check if containers are running
 cd "$DOCKER_COMPOSE_DIR"
 if ! docker compose ps -q app >/dev/null 2>&1; then
-    echo "Error: Contenedor 'app' no está ejecutándose"
+    echo "Error: Nextcloud app container is not running!"
     exit 1
 fi
 
 if ! docker compose ps -q db >/dev/null 2>&1; then
-    echo "Error: Contenedor 'db' no está ejecutándose"
+    echo "Error: Database container is not running!"
     exit 1
 fi
 
-# Crear archivo de información del backup
-echo "Creating backup information file..."
-cat > "$BACKUP_SUBDIR/backup_info.txt" << EOF
+# Create backup info file
+cat > "$BACKUP_DIR/$BACKUP_NAME/backup_info.txt" << EOF
 Nextcloud Backup
-Timestamp: $TIMESTAMP
-Date: $(date)
-Docker Compose Directory: $DOCKER_COMPOSE_DIR
-Database Name: $DB_NAME
-Database User: $DB_USER
+Created: $(date)
+Backup ID: $BACKUP_NAME
 EOF
 
-# Backup de volúmenes Docker
-echo "Backing up Docker volumes..."
+# Backup Nextcloud volume
+echo "Backing up Nextcloud data volume (this may take a while)..."
 docker run --rm \
   -v nextcloud:/source \
-  -v "$BACKUP_SUBDIR:/backup" \
-  alpine tar czf /backup/nextcloud_volume.tar.gz -C /source .
+  -v "$BACKUP_DIR/$BACKUP_NAME:/backup" \
+  alpine tar czf /backup/nextcloud_data.tar.gz -C /source .
 
-# Backup de la base de datos
+# Backup database
 echo "Backing up database..."
+source "$DOCKER_COMPOSE_DIR/.env"  # Load DB password from .env file
 docker compose exec -T db \
   mysqldump --single-transaction \
   --default-character-set=utf8mb4 \
-  -u "$DB_USER" \
-  -p"$DB_PASSWORD" \
-  "$DB_NAME" | gzip > "$BACKUP_SUBDIR/nextcloud_db.sql.gz"
+  -u nextcloud \
+  -p"$MYSQL_PASSWORD" \
+  nextcloud | gzip > "$BACKUP_DIR/$BACKUP_NAME/nextcloud_db.sql.gz"
 
-# Verificar que los backups se crearon correctamente
-if [[ ! -f "$BACKUP_SUBDIR/nextcloud_volume.tar.gz" ]] || \
-   [[ ! -f "$BACKUP_SUBDIR/nextcloud_db.sql.gz" ]]; then
-    echo "Error: Los archivos de backup no se crearon correctamente"
+# Create checksums for verification
+cd "$BACKUP_DIR/$BACKUP_NAME"
+sha256sum nextcloud_data.tar.gz > nextcloud_data.tar.gz.sha256
+sha256sum nextcloud_db.sql.gz > nextcloud_db.sql.gz.sha256
+
+# Create restore instructions
+cat > "$BACKUP_DIR/$BACKUP_NAME/RESTORE_INSTRUCTIONS.txt" << 'EOF'
+To restore this backup:
+
+1. Ensure Docker and Docker Compose are installed
+2. Place your docker-compose.yml and .env files in the target directory
+3. Extract this backup folder to the target server
+4. Run the restore script: ./restore_nextcloud.sh
+EOF
+
+# Create simple restore script
+cat > "$BACKUP_DIR/$BACKUP_NAME/restore_nextcloud.sh" << 'EOF'
+#!/bin/bash
+set -euo pipefail
+
+echo "Starting Nextcloud restore process..."
+
+# Check if we're in the backup directory
+if [[ ! -f "nextcloud_data.tar.gz" || ! -f "nextcloud_db.sql.gz" ]]; then
+    echo "Error: Please run this script from the backup directory"
     exit 1
 fi
 
-# Crear checksums para verificación
-echo "Creating checksums..."
-cd "$BACKUP_SUBDIR"
-sha256sum nextcloud_volume.tar.gz > nextcloud_volume.tar.gz.sha256
-sha256sum nextcloud_db.sql.gz > nextcloud_db.sql.gz.sha256
+# Verify backup integrity
+echo "Verifying backup integrity..."
+sha256sum -c nextcloud_data.tar.gz.sha256
+sha256sum -c nextcloud_db.sql.gz.sha256
 
-# Comprimir todo el directorio de backup para facilitar la transferencia
-echo "Compressing backup directory..."
-cd "$BACKUP_DIR"
-tar czf "nextcloud_backup_$TIMESTAMP.tar.gz" "nextcloud_backup_$TIMESTAMP"
+# Restore Nextcloud volume
+echo "Restoring Nextcloud data..."
+docker run --rm \
+  -v nextcloud:/target \
+  -v "$(pwd):/backup" \
+  alpine sh -c "rm -rf /target/* && tar xzf /backup/nextcloud_data.tar.gz -C /target"
 
-# Limpiar directorio sin comprimir
-rm -rf "$BACKUP_SUBDIR"
+# Restore database
+echo "Restoring database..."
+source ../.env  # Load DB password from .env file in parent directory
+gunzip -c nextcloud_db.sql.gz | docker compose exec -T db mysql -u nextcloud -p"$MYSQL_PASSWORD" nextcloud
+
+echo "Restore completed successfully!"
+echo "Please start your containers with: docker compose up -d"
+echo "And remember to disable maintenance mode when ready"
+EOF
+
+chmod +x "$BACKUP_DIR/$BACKUP_NAME/restore_nextcloud.sh"
 
 echo "Backup completed successfully!"
-echo "Backup file: $BACKUP_DIR/nextcloud_backup_$TIMESTAMP.tar.gz"
-echo "Checksum: $(sha256sum "$BACKUP_DIR/nextcloud_backup_$TIMESTAMP.tar.gz" | cut -d' ' -f1)"
+echo "Backup location: $BACKUP_DIR/$BACKUP_NAME"
+echo "To transfer to new server, compress this directory: tar czf $BACKUP_NAME.tar.gz $BACKUP_NAME/"
