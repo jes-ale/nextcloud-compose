@@ -1,5 +1,5 @@
 ## Implementación de Nextcloud para la Gestión de Notas y archivos ligeros. 
-*jes@alejos.dev* | *[alejos.dev](https://www.alejos.dev)* | *Mexicali, Baja California, México* | *Enero de 2025*
+*contact@devjes.com* | *[devjes.com](https://www.devjes.com)* | *Mexicali, Baja California, México* | *Enero de 2025*
 
 * * *
 
@@ -16,28 +16,20 @@
 
 Contar con un sistema autohospedado que garantice soberanía, disponibilidad y seguridad ofrece extensas ventajas para profesionales, investigadores, estudiantes y académicos. Este artículo presenta una solución técnica para la gestión y sincronización de notas, documentos academicos, de investigacion, de caracter profesional o personal y en general cualquier tipo de documento ligero de acceso cotidiano ( 50 MB > txt, csv, xlsx, md, docx, codigo de programacion), utilizando tecnologías de código abierto: **Nextcloud** sobre un servidor VPS con **Docker** y **Nginx** como reverse proxy.
 
-La arquitectura propuesta no solo ofrece control total sobre los datos, sino que también evita la dependencia de servicios de terceros, optimizando la portabilidad mediante estándares abiertos. Además, se prioriza la seguridad, la escalabilidad y la eficiencia en el uso de recursos, lo que la hace ideal para usuarios con necesidades avanzadas de personalización y requisitos exigentes de disponibilidad.
+La arquitectura propuesta ofrece control total sobre los dato y evita la dependencia de servicios de terceros, optimizando la portabilidad mediante estándares abiertos. Además, se prioriza la seguridad, la escalabilidad y la eficiencia en el uso de recursos, lo que la hace ideal para usuarios con necesidades avanzadas de personalización y requisitos exigentes de disponibilidad.
 
 Este enfoque es particularmente útil para entornos académicos y profesionales que requieren un sistema resiliente y de alta disponibilidad. Para implementaciones organizacionales o empresariales tambien pueden beneficiarse de esta guia.
 
 ### 1. Marco Teórico
 
 #### 1.1 **VPS (Virtual Private Server)**
-
-- **Definición técnica**:  
     Un VPS es una instancia virtualizada que opera sobre un hipervisor (como KVM, Xen o VMware), asignando recursos dedicados (CPU, RAM, almacenamiento NVMe/SSD) dentro de un servidor físico. A diferencia de los contenedores, un VPS tiene un kernel independiente, lo que permite una personalización completa del stack de software, incluyendo el sistema operativo, el firewall y los servicios.
-  
-- **Ventajas estratégicas**:
     - **Aislamiento de recursos**: Garantiza un rendimiento estable bajo carga, gracias a la asignación exclusiva de CPU y RAM.
     - **Control de seguridad**: Permite la implementación de medidas avanzadas como hardening del SO (AppArmor, SELinux), gestión de parches y configuración de redes privadas (VPN WireGuard/IPsec).
     - **Costo-eficiencia**: Ofrece una alternativa económica frente a los servidores dedicados, con planes que parten desde 5 USD/mes (por ejemplo, en DigitalOcean, Linode o Hetzner).
 
 #### 1.2 **WebDAV (RFC 4918)**
-
-- **Fundamentos**:  
     WebDAV es un protocolo de capa de aplicación que extiende los métodos HTTP (como PUT, DELETE y PROPFIND) para permitir operaciones CRUD sobre archivos. Es compatible con sistemas *nix (a través de `davfs2`) y clientes como Joplin.
-
-- **Implementación en Nextcloud**:  
     Nextcloud integra WebDAV bajo la ruta `https://<dominio>/remote.php/dav/files/<usuario>/`, utilizando autenticación OAuth2/Basic Auth y cifrado TLS 1.3. Esta implementación permite una sincronización eficiente (solo se transfieren los cambios) y bloqueos de archivos para prevenir conflictos.
 
 #### 1.3 **Manejadores de Archivos y su Interconexión con Nextcloud**
