@@ -1,5 +1,5 @@
 ## Implementación de Nextcloud para la Gestión de Notas y archivos ligeros. 
-*contact@devjes.com* | *[devjes.com](https://www.devjes.com)* | *Mexicali, Baja California, México* | *Enero de 2025*
+*contact@devjes.com* | *[devjes.com](https://www.devjes.com)* | *Mexicali, Baja California, México* 
 
 * * *
 
