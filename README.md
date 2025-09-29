@@ -8,9 +8,9 @@
 | Versión | Fecha      | Comentario                                    | Autor |
 | ------- | ---------- | --------------------------------------------- | ----- |
 | 1.0.1   | 03/02/2025 | Primera edición. Marco teorico y cheat sheet. | Jes   |
-| 1.0.2    | 16/02/2025 |                                               |   jes    |
+| 1.0.2    | 16/02/2025 | Implementacion y mejoras de marco.                                               |   jes    |
 | 1.0.3    | 02/03/2025 |Se agregan mas apps al marco teórico           |   jes    |
-| 1.0.4   | 28/09/2025 |Se agregan notas rapidas de puntos pendientes a trabajar y mejorar           |   jes    |
+| 1.0.4   | 28/09/2025 |Se agregan notas rapidas de puntos pendientes a trabajar y mejorar. Se escriben algunos parrafos sin revisar la ortografia.       |   jes    |
 
 * * *
 ### Introducción
@@ -19,7 +19,11 @@ Contar con un sistema autohospedado que garantice soberanía, disponibilidad y s
 
 La arquitectura propuesta ofrece control total sobre los dato y evita la dependencia de servicios de terceros, optimizando la portabilidad mediante estándares abiertos. Además, se prioriza la seguridad, la escalabilidad y la eficiencia en el uso de recursos, lo que la hace ideal para usuarios con necesidades avanzadas de personalización y requisitos exigentes de disponibilidad.
 
-Este enfoque es particularmente útil para entornos académicos y profesionales que requieren un sistema resiliente y de alta disponibilidad. Para implementaciones organizacionales o empresariales tambien pueden beneficiarse de esta guia.
+Este enfoque es particularmente útil para entornos académicos y profesionales que requieren un sistema resiliente y de alta disponibilidad.
+
+### Para implementaciones organizacionales o empresariales:
+
+Tambien pueden beneficiarse de esta guia pero se recomienda una amplia investigacion sobre otros conceptos relevantes que no se mencionan en esta guia. Para resolver dudas o solicitar un servicio de consultoria personalizado porfavor contacteme, yo le podre dar una asesoria tecnica y/o guiarlo hacia una solucion e implementacion de calidad empresarial ("Enterprise") para una nube alojada, asi como para otros servicios de tecnologia, inforamcion y computo relevantes para empresas. Por nombrar algunos; Comunicaciones internas entre los miembros de su empresa de mensajeria instantanea, audio, video, mensajeria de forma tradicional (email), comunicaciones criticas en tiemp real, comunicaciones externas con sus clientes, usuarios u operadores, alojamiento masivo de archivos, conexiones VPN y firewall para proteccion y administracion de recursos en red, sistemas de monitoreo en tiempo real, manejar claves secretas y contrasenas, configuracion e implementacion de software para trabajo de redaccion, programacion, contabilidad, inventario, CRM, ERP, configuracion e implementacion de dispositivos IOT, configuracion e implementacion de soluciones tipo Kiosko, etc. Todo con un entorno FOSS, premiando la portabilidad y la seguridad de los datos de su empresa u organizacion.
 
 ### 1. Marco Teórico
 
