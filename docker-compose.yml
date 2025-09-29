@@ -1,30 +1,53 @@
-volumes:
-  nextcloud:
-  db:
-
 services:
   db:
     image: mariadb:10.6
     restart: always
     command: --transaction-isolation=READ-COMMITTED --log-bin=binlog --binlog-format=ROW
     volumes:
-      - db:/var/lib/mysql
+      - ./db_data:/var/lib/mysql
     env_file: ./.env
     environment:
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
-
+    networks:
+      default:
+        ipv4_address: 172.168.0.12
+      
   app:
     image: nextcloud
     restart: always
     env_file: ./.env
-    ports:
-      - 8080:80
     links:
       - db
     volumes:
-      - nextcloud:/var/www/html
+      - ./nextcloud_data:/var/www/html
+      - /var/run/clamav/:/var/run/clamav/
+      - /var/docker/clamav/virus_db/:/var/lib/clamav/
     environment:
       - MYSQL_DATABASE=nextcloud
       - MYSQL_USER=nextcloud
       - MYSQL_HOST=db
+      - TRUSTED_DOMAINS=172.168.0.10 cloud.tudominio.com tudominio.com publicIPv4 https://cloud.tudominio.com 127.0.0.1 localhost 0.0.0.0
+    networks:
+      default:
+        ipv4_address: 172.168.0.11
+
+  clamav:
+    image: "clamav/clamav:stable_base"
+    container_name: "clamav"
+    volumes:
+      # Socket
+      - /var/run/clamav/:/var/run/clamav/
+      # Virus DB
+      - /var/docker/clamav/virus_db/:/var/lib/clamav/
+    restart: unless-stopped
+    networks:
+      default:
+        ipv4_address: 172.168.0.10
+
+networks:
+  default:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.168.0.0/16
