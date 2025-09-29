@@ -10,6 +10,7 @@
 | 1.0.1   | 03/02/2025 | Primera edición. Marco teorico y cheat sheet. | Jes   |
 | 1.0.2    | 16/02/2025 |                                               |   jes    |
 | 1.0.3    | 02/03/2025 |Se agregan mas apps al marco teórico           |   jes    |
+| 1.0.4   | 28/09/2025 |Se agregan notas rapidas de puntos pendientes a trabajar y mejorar           |   jes    |
 
 * * *
 ### Introducción
@@ -65,15 +66,29 @@ Los manejadores de archivos son herramientas esenciales para la gestión de dato
     - **Conversión sin pérdidas**: Puede ser renderizado a HTML o PDF utilizando herramientas como Pandoc o MkDocs.
 
 #### 1.5 **Cliente/Editor de Markdown**
-##### 1.5.1 **[Joplin (v2.14.19+)](https://github.com/laurent22/joplin)**
+##### 1.5.1 **[Joplin](https://github.com/laurent22/joplin)**
 Joplin es un cliente de notas multiplataforma (basado en Electron.js para desktop y React Native para móvil) que utiliza un motor de sincronización delta y cifrado AES-256-GCM (opcional) tanto en reposo como en tránsito. Además, soporta plugins (TypeScript/Node.js) y una CLI para automatización.
 
 - **Integración con WebDAV**:  
     Joplin almacena las notas como archivos `.md` junto con metadatos en archivos `*.json`, organizados en una estructura jerárquica en el servidor. El cliente maneja conflictos mediante timestamps y hashes SHA-256, lo que permite una sincronización eficiente con Nextcloud a través de WebDAV.
 
-##### 1.5.2 **[Obsidian (v1.8.4)](https://obsidian.md/download)**
+##### 1.5.2 **[Obsidian](https://obsidian.md/download)**
 Obsidian es una herramienta de gestión de conocimiento basada en Markdown, diseñada para crear y organizar notas en un sistema de bóvedas locales. A diferencia de Joplin, Obsidian no tiene un sistema de sincronización por WebDAV nativo, por eso se utiliza el plugin [**Remotely Save**](https://github.com/remotely-save/remotely-save), una solución de sincronización no oficial que permite a los usuarios sincronizar sus bóvedas entre dispositivos utilizando servicios en la nube como Amazon S3, Dropbox, OneDrive, WebDAV y otros. Este plugin soporta cifrado de extremo a extremo mediante OpenSSL/rclone, lo que garantiza la seguridad de los datos durante la transferencia. Además, ofrece opciones para omitir archivos grandes y rutas específicas mediante expresiones regulares, así como detección básica de conflictos en su versión gratuita y manejo avanzado de conflictos en la versión PRO.
 
+##### 1.5.3 **[Zettlr]()**
+Requiere sincronizacion independiente (webdav por file manager o nextcloud desktop client sobre sistema de archivos)
+
+##### 1.5.4 **[NeoVim]()**
+Requiere sincronizacion independiente (webdav por file manager o nextcloud desktop client sobre sistema de archivos)
+
+##### 1.5.5 **[Quillpad (Android)]()**
+Integracion nativa con nextcloud.
+
+##### 1.5.6 **[Otros]()**
+Cualquier editor de texto con o sin soporte para markdown puede usarse. Sacrificando la visualizacion previa que ofrecen otras opciones de esta lista.
+
+##### 1.5.7 **Nextlcloud Editor web**
+Desde la propia pagina de nextcloud existe un editor de texto web con soporte completo para markdown.
 #### 1.6 **Nextcloud (v28+)**  
 [Nextcloud](https://github.com/nextcloud/server) es una plataforma de colaboración y almacenamiento en la nube que permite a los usuarios gestionar sus archivos de manera segura y privada.
 
@@ -184,3 +199,30 @@ server {
     error_log /var/log/nginx/nextcloud_error.log;
 }
 ```
+
+Algunos comandos utiles para ejecutar dentro del contenedor de la app
+
+```bash
+php occ maintenance:mode --on
+```
+
+```bash
+php occ maintenance:mode --off
+```
+
+```bash
+php occ upgrade
+```
+
+```bash
+php occ maintenance:repair
+```
+Es importante realizar configuraciones post instalacion en el servidor:
+Actualizar los hosts permitidos.
+Configurar ejecucion de cron desde el servidor (se recomienda un cron en el sistema host).
+Configurar Server Side Encryption.
+Configurar E2E enncryption en los clientes y usuarios usados.
+
+Previo a instalar, en caso de hacerlo en una maquina local "on-premise" baremetal, o un VPS sobre bare metal, se recomienda configurar full disk encryption usando tecnologia como LUKS.
+
+Guardar claves de encriptacion E2E de los clientes con la misma seguridad con la que se guarda su contrasena, se recomienda usar un manejador de contrasenas. (la clave de E2E la generas desde el cliente de nextcloud cuando intentas activar el cifrado por primera vez).
